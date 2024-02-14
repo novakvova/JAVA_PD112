@@ -10,5 +10,5 @@ public class CategoryItemDTO {
     private String name;
     private String image;
     private String description;
-    private Date dateCreated;
+    private String dateCreated;
 }
