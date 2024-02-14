@@ -16,6 +16,6 @@ public interface CategoryMapper {
     @Mapping(source = "creationTime", target = "dateCreated", dateFormat = "dd.MM.yyyy HH:mm:ss")
     CategoryItemDTO categoryItemDTO(CategoryEntity category);
     List<CategoryItemDTO> categoryItemDTOList(List<CategoryEntity> categories);
-    @Mapping(target = "file", ignore = true)
+    @Mapping(target = "image", ignore = true)
     CategoryEntity categoryEntityByCategoryCreateDTO(CategoryCreateDTO category);
 }

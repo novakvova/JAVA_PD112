@@ -24,7 +24,7 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void init() {
         try {
-            if (Files.exists(rootLocation))
+            if (!Files.exists(rootLocation))
                 Files.createDirectory(rootLocation);
         } catch (IOException ex) {
             System.out.println("Помилка створення папки " + ex.getMessage());
