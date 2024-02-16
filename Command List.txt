@@ -1,0 +1,10 @@
+npm create vite@latest my-mapster -- --template react-ts
+
+cd my-mapster
+npm install
+npm run dev
+
+npm install antd --save
+
+npm i react-router-dom
+
