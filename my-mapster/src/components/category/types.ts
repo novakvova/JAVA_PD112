@@ -20,7 +20,7 @@ export interface ICategoryItem {
     id: number;
     name: string;
     description: string;
-    file: string;
+    image: string;
 }
 
 export interface ICategoryEdit {

@@ -2,6 +2,7 @@ package org.example.contollers;
 
 import lombok.AllArgsConstructor;
 import org.example.dto.CategoryCreateDTO;
+import org.example.dto.CategoryEditDTO;
 import org.example.dto.CategoryItemDTO;
 import org.example.entities.CategoryEntity;
 import org.example.mapper.CategoryMapper;
@@ -38,6 +39,31 @@ public class CategoryController {
         entity.setCreationTime(LocalDateTime.now());
         String fileName = storageService.SaveImage(model.getFile(), FileSaveFormat.WEBP);
         entity.setImage(fileName);
+        categoryRepository.save(entity);
+        var result = categoryMapper.categoryItemDTO(entity);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping(value="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CategoryItemDTO> edit(@ModelAttribute CategoryEditDTO model) {
+        var old = categoryRepository.findById(model.getId()).orElse(null);
+        if (old == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        var entity = categoryMapper.categoryEditDto(model);
+        if(model.getFile()==null) {
+            entity.setImage(old.getImage());
+        }
+        else {
+            try {
+                storageService.deleteImage(old.getImage());
+                String fileName = storageService.SaveImage(model.getFile(), FileSaveFormat.WEBP);
+                entity.setImage(fileName);
+            }
+            catch (Exception exception) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
         categoryRepository.save(entity);
         var result = categoryMapper.categoryItemDTO(entity);
         return new ResponseEntity<>(result, HttpStatus.OK);
