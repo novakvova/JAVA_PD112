@@ -42,4 +42,32 @@ public class CategoryController {
         var result = categoryMapper.categoryItemDTO(entity);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    // Method to delete a category by ID
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Void> delete(@PathVariable int categoryId) {
+        var entity = categoryRepository.findById(categoryId).orElse(null);
+        if (entity == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        try {
+            storageService.deleteImage(entity.getImage());
+            categoryRepository.deleteById(categoryId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryItemDTO> getById(@PathVariable int categoryId) {
+        var entity = categoryRepository.findById(categoryId).orElse(null);
+        if (entity == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        var result =  categoryMapper.categoryItemDTO(entity);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }
