@@ -15,3 +15,17 @@ export interface IUploadedFile {
     type: string;
     uid: string;
 }
+
+export interface ICategoryItem {
+    id: number;
+    name: string;
+    description: string;
+    file: string;
+}
+
+export interface ICategoryEdit {
+    id: number;
+    name: string;
+    file: File|undefined;
+    description: string;
+}
