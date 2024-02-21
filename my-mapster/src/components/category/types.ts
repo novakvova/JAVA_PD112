@@ -23,6 +23,12 @@ export interface ICategoryItem {
     image: string;
 }
 
+export interface IGetCategories {
+    content: ICategoryItem[],
+    totalPages: number,
+    totalElements: number,
+}
+
 export interface ICategoryEdit {
     id: number;
     name: string;

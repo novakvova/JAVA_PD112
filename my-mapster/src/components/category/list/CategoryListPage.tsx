@@ -2,10 +2,27 @@ import {Button, Popconfirm, Table} from "antd";
 import {Link} from "react-router-dom";
 import {APP_ENV} from "../../../env";
 import {ColumnsType} from "antd/es/table";
-import {ICategoryItem} from "../types.ts";
+import {ICategoryItem, IGetCategories} from "../types.ts";
 import {EditOutlined, DeleteOutlined} from '@ant-design/icons';
 import http_common from "../../../http_common.ts";
 import {useEffect, useState} from "react";
+import type {GetProp, TableProps} from 'antd';
+import qs from 'qs';
+
+type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
+
+interface TableParams {
+    pagination?: TablePaginationConfig;
+    sortField?: string;
+    sortOrder?: string;
+    filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
+}
+
+const getRandomuserParams = (params: TableParams) => ({
+    size: params.pagination?.pageSize,
+    page: params.pagination?.current == undefined ? 1 : params.pagination.current - 1,
+    ...params,
+});
 
 const CategoryListPage = () => {
     const imgURL = APP_ENV.BASE_URL + "/uploading/150_";
@@ -64,19 +81,40 @@ const CategoryListPage = () => {
 
     const [data, setData] = useState<ICategoryItem[]>([]);
 
+    const [loading, setLoading] = useState(false);
+
+    const [tableParams, setTableParams] = useState<TableParams>({
+        pagination: {
+            current: 1,
+            pageSize: 1,
+        },
+    });
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await http_common.get("/api/categories");
+                const response =
+                    await http_common.get<IGetCategories>(`/api/categories?${qs.stringify(getRandomuserParams(tableParams))}`);
+
                 console.log("response.data", response.data)
-                setData(response.data);
+                setData(response.data.content);
+                setLoading(false);
+
+                setTableParams({
+                    ...tableParams,
+                    pagination: {
+                        ...tableParams.pagination,
+                        total: response.data.totalElements,
+                    },
+                });
+
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
         };
-
+        setLoading(true);
         fetchData();
-    }, []);
+    }, [JSON.stringify(tableParams)]);
 
     const handleDelete = async (categoryId: number) => {
         try {
@@ -84,6 +122,20 @@ const CategoryListPage = () => {
             setData(data.filter(x => x.id != categoryId));
         } catch (error) {
             throw new Error(`Error: ${error}`);
+        }
+    };
+
+
+    const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+        setTableParams({
+            pagination,
+            filters,
+            ...sorter,
+        });
+
+        // `dataSource` is useless since `pageSize` changed
+        if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+            setData([]);
         }
     };
 
@@ -96,7 +148,16 @@ const CategoryListPage = () => {
                 </Button>
             </Link>
 
-            <Table columns={columns} rowKey={"id"} dataSource={data} size="middle"/>
+            <Table
+                columns={columns}
+                rowKey={"id"}
+                dataSource={data}
+                pagination={tableParams.pagination}
+                loading={loading}
+                onChange={handleTableChange}
+            />
+
+            {/*columns={columns} rowKey={"id"} dataSource={data} size="middle"/>*/}
         </>
     );
 }
