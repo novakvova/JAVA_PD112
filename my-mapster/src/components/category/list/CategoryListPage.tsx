@@ -83,36 +83,36 @@ const CategoryListPage = () => {
                 </Button>
             </Link>
 
-            <Row gutter={16}>
-                <Form form={form}
-                      onFinish={onSubmit}
-                      layout={"vertical"}
-                      style={{
-                          minWidth: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          padding: 20,
-                      }}
-                >
-                    <Form.Item
-                        label="Назва"
-                        name="keyword"
-                        htmlFor="keyword"
+                <Row gutter={16}>
+                    <Form form={form}
+                          onFinish={onSubmit}
+                          layout={"vertical"}
+                          style={{
+                              minWidth: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              padding: 20,
+                          }}
                     >
-                        <Input autoComplete="keyword"/>
-                    </Form.Item>
+                        <Form.Item
+                            label="Назва"
+                            name="keyword"
+                            htmlFor="keyword"
+                        >
+                            <Input autoComplete="keyword"/>
+                        </Form.Item>
 
-                    <Row style={{display: 'flex', justifyContent: 'center'}}>
-                        <Button style={{margin: 10}} type="primary" htmlType="submit">
-                            Пошук
-                        </Button>
-                        <Button style={{margin: 10}} htmlType="button" onClick={() =>{ }}>
-                            Скасувати
-                        </Button>
-                    </Row>
-                </Form>
-            </Row>
+                        <Row style={{display: 'flex', justifyContent: 'center'}}>
+                            <Button style={{margin: 10}} type="primary" htmlType="submit">
+                                Пошук
+                            </Button>
+                            <Button style={{margin: 10}} htmlType="button" onClick={() =>{ }}>
+                                Скасувати
+                            </Button>
+                        </Row>
+                    </Form>
+                </Row>
 
             <Row gutter={16}>
                 <Col span={24}>

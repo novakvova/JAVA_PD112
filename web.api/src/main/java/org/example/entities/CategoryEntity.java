@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -26,4 +27,7 @@ public class CategoryEntity {
     //@Temporal(TemporalType.TIMESTAMP)
     //private Date dateCreated;
     private LocalDateTime creationTime;
+
+    @OneToMany(mappedBy = "category")
+    private List<ProductEntity> products;
 }
