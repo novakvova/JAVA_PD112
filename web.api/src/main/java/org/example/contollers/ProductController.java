@@ -27,4 +27,6 @@ public class ProductController {
         var result = productService.create(model);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 }

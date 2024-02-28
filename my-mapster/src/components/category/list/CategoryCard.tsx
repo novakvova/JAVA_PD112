@@ -23,11 +23,11 @@ const CategoryCard: React.FC<ICategoryCardProps> = (props) => {
             <Col style={{padding: 10}} xxl={4} lg={6} md={8} sm={12}>
                 <Card
                     bodyStyle={{flex: '1', paddingBlock: '10px'}}
-                    style={{height: 280, display: 'flex', flexDirection: 'column', paddingTop: '40px'}}
+                    style={{height: 380, display: 'flex', flexDirection: 'column', paddingTop: '40px'}}
                     hoverable
                     cover={
                         <img
-                            style={{height: '100px', objectFit: 'contain'}}
+                            style={{height: '150px', objectFit: 'contain'}}
                             alt={name}
                             src={image ? `${APP_ENV.BASE_URL}/uploading/300_${image}` : NotImage}
                         />
@@ -55,7 +55,7 @@ const CategoryCard: React.FC<ICategoryCardProps> = (props) => {
                     <Meta
                         title={name}
                         description={
-                            <Title level={5} type="success">{description}</Title>
+                            <Title level={5} type="success">{description.substring(0, 35)} ...</Title>
                         }
                     />
                 </Card>

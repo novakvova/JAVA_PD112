@@ -24,10 +24,8 @@ export interface ICategoryItem {
 }
 
 export interface IGetCategories {
-    content: ICategoryItem[],
-    totalPages: number,
-    totalElements: number,
-    number: number
+    list: ICategoryItem[],
+    totalCount: number
 }
 
 export interface ICategoryEdit {

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.dto.category.CategoryCreateDTO;
 import org.example.dto.category.CategoryEditDTO;
 import org.example.dto.category.CategoryItemDTO;
+import org.example.dto.category.CategorySearchResultDTO;
 import org.example.entities.CategoryEntity;
 import org.example.mapper.CategoryMapper;
 import org.example.repositories.CategoryRepository;
@@ -24,9 +25,12 @@ public class CategoryServiceImpl implements CategoryService {
     private final StorageService storageService;
 
     @Override
-    public Page<CategoryItemDTO> getAllCategories(Pageable pageable) {
-        Page<CategoryEntity> categories = categoryRepository.findAll(pageable);
-        return categories.map(categoryMapper::categoryItemDTO);
+    public CategorySearchResultDTO getAllCategories(Pageable pageable) {
+        Page<CategoryEntity> search = categoryRepository.findAll(pageable);
+        var searchResult = new CategorySearchResultDTO();
+        searchResult.setList(categoryMapper.categoryItemDTOList(search.getContent()));
+        searchResult.setTotalCount((int)search.getTotalElements());
+        return searchResult;
     }
 
     @Override
@@ -89,7 +93,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Page<CategoryEntity> searchCategories(String keyword, int page, int size) {
-        return categoryRepository.searchByNameContaining(keyword, PageRequest.of(page, size));
+    public CategorySearchResultDTO searchCategories(String keyword, int page, int size) {
+        var result = categoryRepository.searchByNameContainingIgnoreCase(keyword, PageRequest.of(page, size));
+        var searchResult = new CategorySearchResultDTO();
+        searchResult.setList(categoryMapper.categoryItemDTOList(result.getContent()));
+        searchResult.setTotalCount((int)result.getTotalElements());
+        return searchResult;
     }
 }

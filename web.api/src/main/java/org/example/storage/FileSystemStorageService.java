@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,4 +62,25 @@ public class FileSystemStorageService implements StorageService {
             Files.deleteIfExists(fileToDelete);
         }
     }
+
+    @Override
+    public String SaveImageURL(String imageUrl, FileSaveFormat format) {
+        try {
+            String ext = format.name().toLowerCase();
+            String randomName = UUID.randomUUID().toString() + "." + ext;
+            int[] sizes = {32, 150, 300, 600, 1200};
+            URL url = new URL(imageUrl);
+            BufferedImage bufferedImage = ImageIO.read(url);
+            for (int size : sizes) {
+                String fileSave = rootLocation.toString() + "/" + size + "_" + randomName;
+                Thumbnails.of(bufferedImage).size(size, size).outputFormat(ext).toFile(fileSave);
+            }
+            return randomName;
+        }
+        catch (IOException ex) {
+            System.out.println("Bad save image "+ ex.getMessage());
+            return null;
+        }
+    }
+
 }

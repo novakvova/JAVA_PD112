@@ -8,4 +8,5 @@ public interface StorageService {
     void init();
     String SaveImage(MultipartFile file, FileSaveFormat format);
     void deleteImage(String fileName) throws IOException;
+    String SaveImageURL(String imageUrl, FileSaveFormat format);
 }
