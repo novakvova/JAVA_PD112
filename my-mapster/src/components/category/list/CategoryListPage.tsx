@@ -1,4 +1,4 @@
-import {Button, Col, Form, Input, Pagination, Row} from "antd";
+import {Button, Col, Collapse, Form, Input, Pagination, Row} from "antd";
 import {Link, useSearchParams} from "react-router-dom";
 import {ICategorySearch, IGetCategories} from "../types.ts";
 import http_common from "../../../http_common.ts";
@@ -29,7 +29,7 @@ const CategoryListPage = () => {
         const fetchData = async () => {
             try {
                 const response =
-                    await http_common.get<IGetCategories>(`/api/categories/search?keyword=${formParams.keyword}&page=${(formParams.page-1)}&size=${formParams.size}`);
+                    await http_common.get<IGetCategories>(`/api/categories/search?keyword=${formParams.keyword}&page=${(formParams.page - 1)}&size=${formParams.size}`);
                 console.log("response.data", response.data)
                 setData(response.data);
                 // setLoading(false);
@@ -46,7 +46,7 @@ const CategoryListPage = () => {
     const handleDelete = async (categoryId: number) => {
         try {
             await http_common.delete(`/api/categories/${categoryId}`);
-            setData({ ...data, list: list.filter(x => x.id != categoryId)});
+            setData({...data, list: list.filter(x => x.id != categoryId)});
         } catch (error) {
             throw new Error(`Error: ${error}`);
         }
@@ -61,7 +61,7 @@ const CategoryListPage = () => {
         updateSearchParams(model);
     }
 
-    const updateSearchParams = (params : ICategorySearch) =>{
+    const updateSearchParams = (params: ICategorySearch) => {
         for (const [key, value] of Object.entries(params)) {
             if (value !== undefined && value !== 0) {
                 searchParams.set(key, value);
@@ -80,36 +80,42 @@ const CategoryListPage = () => {
                     ADD +
                 </Button>
             </Link>
-                <Row gutter={16}>
-                    <Form form={form}
-                          onFinish={onSubmit}
-                          layout={"vertical"}
-                          style={{
-                              minWidth: '100%',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'center',
-                              padding: 20,
-                          }}
-                    >
-                        <Form.Item
-                            label="Назва"
-                            name="keyword"
-                            htmlFor="keyword"
-                        >
-                            <Input autoComplete="keyword"/>
-                        </Form.Item>
 
-                        <Row style={{display: 'flex', justifyContent: 'center'}}>
-                            <Button style={{margin: 10}} type="primary" htmlType="submit">
-                                Пошук
-                            </Button>
-                            <Button style={{margin: 10}} htmlType="button" onClick={() =>{ }}>
-                                Скасувати
-                            </Button>
-                        </Row>
-                    </Form>
-                </Row>
+            <Collapse defaultActiveKey={0}>
+                <Collapse.Panel key={1} header={"Панель пошуку"}>
+                    <Row gutter={16}>
+                        <Form form={form}
+                              onFinish={onSubmit}
+                              layout={"vertical"}
+                              style={{
+                                  minWidth: '100%',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  padding: 20,
+                              }}
+                        >
+                            <Form.Item
+                                label="Назва"
+                                name="keyword"
+                                htmlFor="keyword"
+                            >
+                                <Input autoComplete="keyword"/>
+                            </Form.Item>
+
+                            <Row style={{display: 'flex', justifyContent: 'center'}}>
+                                <Button style={{margin: 10}} type="primary" htmlType="submit">
+                                    Пошук
+                                </Button>
+                                <Button style={{margin: 10}} htmlType="button" onClick={() => {
+                                }}>
+                                    Скасувати
+                                </Button>
+                            </Row>
+                        </Form>
+                    </Row>
+                </Collapse.Panel>
+            </Collapse>
 
             <Row style={{width: '100%', display: 'flex', marginTop: '25px', justifyContent: 'center'}}>
                 <Pagination
@@ -133,7 +139,7 @@ const CategoryListPage = () => {
                             <h2>Список пустий</h2>
                         ) : (
                             list.map((item) =>
-                                <CategoryCard key={item.id} item={item} handleDelete={handleDelete} />,
+                                <CategoryCard key={item.id} item={item} handleDelete={handleDelete}/>,
                             )
                         )}
                     </Row>
