@@ -1,5 +1,5 @@
 import {Button, Col, Collapse, Form, Input, Pagination, Row} from "antd";
-import { useSearchParams} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {IGetProducts, IProductSearch} from "../types.ts";
 import ProductCard from "./ProductCard.tsx";
@@ -32,7 +32,14 @@ const ProductListPage = () => {
             try {
                 const response =
                     await http_common
-                        .get<IGetProducts>(`/api/products/search?keywordName=${formParams.keywordName}&keywordCategory=${formParams.keywordCategory}&keywordDescription=${formParams.keywordDescription}&page=${(formParams.page-1)}&size=${formParams.size}`);
+                        .get<IGetProducts>(`/api/products/search`,
+                            {
+                                params: {
+                                    ...formParams,
+                                    page: formParams.page-1
+                                }
+                            });
+
                 setData(response.data);
                 // setLoading(false);
             } catch (error) {
@@ -78,6 +85,12 @@ const ProductListPage = () => {
     return (
         <>
             <h1>List of Products</h1>
+
+            <Link to={"/product/create"}>
+                <Button type="primary" style={{margin: '5px'}}>
+                    ADD +
+                </Button>
+            </Link>
             <Collapse defaultActiveKey={0}>
                 <Collapse.Panel key={1} header={"Search Panel"}>
                     <Row gutter={16}>

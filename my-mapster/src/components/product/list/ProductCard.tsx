@@ -1,8 +1,10 @@
 import {Button, Card, Col, Popconfirm, Typography} from "antd";
 import Meta from "antd/es/card/Meta";
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import NotImage from '../../../assets/imagenot.png';
 import {Link} from "react-router-dom";
 import {IProductItem} from "../types.ts";
+import {APP_ENV} from "../../../env";
 
 const { Title } = Typography;
 
@@ -26,10 +28,10 @@ const ProductCard: React.FC<IProductCardProps> = (props) => {
                     hoverable
                     cover={
                         <img
-                            style={{height: '300px', objectFit: 'contain'}}
+                            style={{height: '150px', objectFit: 'contain'}}
                             alt={name}
-                            // src={image ? `${APP_ENV.BASE_URL}/uploading/300_${image}` : NotImage}
-                            src={files[0]}
+                             src={files[0] ? `${APP_ENV.BASE_URL}/uploading/300_${files[0]}` : NotImage}
+                            //src={files[0]}
 
 
                         />

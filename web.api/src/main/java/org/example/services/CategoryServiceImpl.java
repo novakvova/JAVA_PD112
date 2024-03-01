@@ -5,6 +5,8 @@ import org.example.dto.category.CategoryCreateDTO;
 import org.example.dto.category.CategoryEditDTO;
 import org.example.dto.category.CategoryItemDTO;
 import org.example.dto.category.CategorySearchResultDTO;
+import org.example.dto.common.SelectItemDTO;
+import org.example.dto.product.ProductItemDTO;
 import org.example.entities.CategoryEntity;
 import org.example.mapper.CategoryMapper;
 import org.example.repositories.CategoryRepository;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -99,5 +103,16 @@ public class CategoryServiceImpl implements CategoryService {
         searchResult.setList(categoryMapper.categoryItemDTOList(result.getContent()));
         searchResult.setTotalCount((int)result.getTotalElements());
         return searchResult;
+    }
+
+    @Override
+    public List<SelectItemDTO> getNames() {
+        var products = categoryRepository.findAll().stream()
+                .map(category -> {
+                    var dto = categoryMapper.selectItemDTO(category);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return products;
     }
 }
