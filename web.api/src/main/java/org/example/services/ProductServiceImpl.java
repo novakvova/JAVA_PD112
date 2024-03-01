@@ -2,19 +2,27 @@ package org.example.services;
 
 import lombok.AllArgsConstructor;
 import org.example.dto.product.ProductCreateDTO;
+import org.example.dto.product.ProductEditDTO;
 import org.example.dto.product.ProductItemDTO;
+import org.example.dto.product.ProductPhotoDTO;
 import org.example.entities.CategoryEntity;
 import org.example.entities.ProductEntity;
 import org.example.entities.ProductImageEntity;
+import org.example.mapper.ProductMapper;
 import org.example.repositories.ProductImageRepository;
 import org.example.repositories.ProductRepository;
 import org.example.storage.FileSaveFormat;
 import org.example.storage.StorageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import org.example.dto.product.ProductSearchResultDTO;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final StorageService storageService;
+    private final ProductMapper productMapper;
     @Override
     public ProductItemDTO create(ProductCreateDTO model) {
         var p = new ProductEntity();
@@ -71,6 +80,78 @@ public class ProductServiceImpl implements ProductService {
             list.add(productItemDTO);
         }
         return list;
+    }
+
+    @Override
+    public ProductItemDTO edit(ProductEditDTO model) {
+        var p = productRepository.findById(model.getId());
+        if(p.isPresent())
+        {
+            try {
+                var product = p.get();
+                var imagesDb = product.getProductImages();
+                for (var image : imagesDb) {
+                    if (!isAnyImage(model.getOldPhotos(), image)) {
+                        productImageRepository.delete(image);
+                        storageService.deleteImage(image.getName());
+                    }
+                }
+                var cat = new CategoryEntity();
+                cat.setId(model.getCategory_id());
+                product.setName(model.getName());
+                product.setDescription(model.getDescription());
+                product.setPrice(model.getPrice());
+                product.setCategory(cat);
+                productRepository.save(product);
+                for (var img : model.getNewPhotos()) {
+                    var file = storageService.SaveImageBase64(img.getPhoto(), FileSaveFormat.WEBP);
+                    ProductImageEntity pi = new ProductImageEntity();
+                    pi.setName(file);
+                    pi.setDateCreated(LocalDateTime.now());
+                    pi.setPriority(img.getPriority());
+                    pi.setDelete(false);
+                    pi.setProduct(product);
+                    productImageRepository.save(pi);
+                }
+            }
+            catch(Exception ex) {
+                System.out.println("Edit product is problem " + ex.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isAnyImage(List<ProductPhotoDTO> list, ProductImageEntity image) {
+        boolean result = false;
+
+        for(var item : list) {
+            if (item.getPhoto().equals(image.getName()))
+                return true;
+        }
+        return result;
+    }
+
+    @Override
+    public ProductSearchResultDTO searchProducts(
+            String keywordName, String keywordCategory, String keywordDescription, int page, int size) {
+        Page<ProductEntity> result = productRepository.searchProducts(
+                "%" + keywordName + "%", "%" + keywordCategory + "%", "%" + keywordDescription + "%",
+                PageRequest.of(page, size));
+
+        List<ProductItemDTO> products = result.getContent().stream()
+                .map(product -> {
+                    ProductItemDTO productItemDTO = productMapper.ProductItemDTOByProduct(product);
+
+                    // Retrieve image names for the current product
+                    List<String> imageNames = productImageRepository.findImageNamesByProduct(product);
+                    productItemDTO.setFiles(imageNames);
+
+                    return productItemDTO;
+                })
+                .collect(Collectors.toList());
+
+        return new ProductSearchResultDTO(products, (int) result.getTotalElements());
     }
 
 
