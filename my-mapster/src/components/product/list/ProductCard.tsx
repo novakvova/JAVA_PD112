@@ -37,7 +37,7 @@ const ProductCard: React.FC<IProductCardProps> = (props) => {
                         />
                     }
                     actions={[
-                        <Link to={`/categories/edit/${id}`}>
+                        <Link to={`/product/edit/${id}`}>
                             <Button type="primary" icon={<EditOutlined/>}>
                                 Edit
                             </Button>
