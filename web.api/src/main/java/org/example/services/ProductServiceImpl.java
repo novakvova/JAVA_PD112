@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 
 import org.example.dto.product.ProductSearchResultDTO;
 
+import static org.example.specifications.ProductEntitySpecifications.*;
+
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -134,10 +136,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductSearchResultDTO searchProducts(
-            String keywordName, String keywordCategory, String keywordDescription, int page, int size) {
-        Page<ProductEntity> result = productRepository.searchProducts(
-                "%" + keywordName + "%", "%" + keywordCategory + "%", "%" + keywordDescription + "%",
-                PageRequest.of(page, size));
+            String name, int categoryId,
+            String description, int page, int size) {
+//        Page<ProductEntity> result = productRepository.searchProducts(
+//                "%" + keywordName + "%", "%" + keywordCategory + "%", "%" + keywordDescription + "%",
+//                PageRequest.of(page, size));
+
+        Page<ProductEntity> result = productRepository
+                .findAll(
+                        findByCategoryId(categoryId).and(findByName(name)).and(findByDescription(description)),
+                        PageRequest.of(page, size));
 
         List<ProductItemDTO> products = result.getContent().stream()
                 .map(product -> {
