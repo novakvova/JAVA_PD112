@@ -6,6 +6,7 @@ import CategoryEditPage from "./components/category/edit/CategoryEditPage.tsx";
 import TestPage from "./components/test";
 import ProductListPage from "./components/product/list/ProductListPage.tsx";
 import ProductCreatePage from "./components/product/create/ProductCreatePage.tsx";
+import ProductEditPage from "./components/product/edit/ProdutEditPage.tsx";
 
 const App = () => (
     <>
@@ -20,6 +21,7 @@ const App = () => (
                 <Route path={"product"}>
                     <Route index element={<ProductListPage/>} />
                     <Route path={"create"} element={<ProductCreatePage/>} />
+                    <Route path={"edit/:id"} element={<ProductEditPage/>} />
                 </Route>
 
                 <Route path={"test"} element={<TestPage/>}/>

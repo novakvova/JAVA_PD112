@@ -162,6 +162,17 @@ public class ProductServiceImpl implements ProductService {
         return new ProductSearchResultDTO(products, (int) result.getTotalElements());
     }
 
+    @Override
+    public ProductItemDTO getById(Integer productId) {
+        var entity = productRepository.findById(productId).orElse(null);
+        if (entity == null) {
+            return null;
+        }
 
+        var product = productMapper.ProductItemDTOByProduct(entity);
+        product.setFiles(productImageRepository.findImageNamesByProduct(entity));
+
+        return product;
+    }
 }
 

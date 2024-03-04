@@ -47,4 +47,13 @@ public class ProductController {
                 description, page, size);
         return new ResponseEntity<>(searchResult, HttpStatus.OK);
     }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductItemDTO> getById(@PathVariable int productId) {
+        var result = productService.getById(productId);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

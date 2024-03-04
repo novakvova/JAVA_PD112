@@ -93,8 +93,6 @@ const ProductListPage = () => {
         setSearchParams(searchParams);
     };
 
-    const categoriesData = categories?.map(item => ({label: item.name, value: item.id}));
-
     return (
         <>
             <h1>List of Products</h1>
