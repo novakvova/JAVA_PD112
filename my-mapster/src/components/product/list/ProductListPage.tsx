@@ -1,9 +1,10 @@
-import {Button, Col, Collapse, Form, Input, Pagination, Row} from "antd";
+import {Button, Col, Collapse, Form, Input, Pagination, Row, Select} from "antd";
 import {Link, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {IGetProducts, IProductSearch} from "../types.ts";
 import ProductCard from "./ProductCard.tsx";
 import http_common from "../../../http_common.ts";
+import {ISelectItem} from "../../helpers/types.ts";
 
 const ProductListPage = () => {
     const [data, setData] = useState<IGetProducts>({
@@ -11,12 +12,22 @@ const ProductListPage = () => {
         totalCount: 0
     });
 
+    const [categories, setCategories] = useState<ISelectItem[]>([]);
+
     const [searchParams, setSearchParams] = useSearchParams();
 
+    useEffect(() => {
+        http_common.get<ISelectItem[]>("/api/categories/names")
+            .then(resp=> {
+                //console.log("list categories", resp.data);
+                setCategories(resp.data);
+            });
+    },[]);
+
     const [formParams, setFormParams] = useState<IProductSearch>({
-        keywordName: searchParams.get('keywordName') || "",
-        keywordDescription: searchParams.get('keywordName') || "",
-        keywordCategory: searchParams.get('keywordName') || "",
+        name: searchParams.get('name') || "",
+        description: searchParams.get('name') || "",
+        categoryId: Number(searchParams.get('categoryId')) || 0,
         page: Number(searchParams.get('page')) || 1,
         size: Number(searchParams.get('size')) || 3
     });
@@ -24,7 +35,7 @@ const ProductListPage = () => {
     const [form] = Form.useForm<IProductSearch>();
 
     const onSubmit = async (values: IProductSearch) => {
-        findCategories({...formParams, page: 1, keywordName: values.keywordName, keywordDescription: values.keywordDescription, keywordCategory: values.keywordCategory});
+        findCategories({...formParams, page: 1, name: values.name, description: values.description, categoryId: values.categoryId});
     }
 
     useEffect(() => {
@@ -82,6 +93,8 @@ const ProductListPage = () => {
         setSearchParams(searchParams);
     };
 
+    const categoriesData = categories?.map(item => ({label: item.name, value: item.id}));
+
     return (
         <>
             <h1>List of Products</h1>
@@ -122,11 +135,21 @@ const ProductListPage = () => {
                             </Form.Item>
 
                             <Form.Item
-                                label="Category"
-                                name="keywordCategory"
-                                htmlFor="keywordCategory"
+                                label="Категорія"
+                                name="categoryId"
+                                htmlFor="categoryId"
                             >
-                                <Input autoComplete="keyword"/>
+                                <Select
+                                    defaultValue={"Усі категорії"}
+                                >
+                                    <Select.Option value="0">Усі категорії</Select.Option>
+                                    {
+                                        categories.map(x=> (
+                                            <Select.Option value={x.id}>{x.name}</Select.Option>
+                                        ))
+                                    }
+
+                                </Select>
                             </Form.Item>
 
                             <Row style={{display: 'flex', justifyContent: 'center'}}>

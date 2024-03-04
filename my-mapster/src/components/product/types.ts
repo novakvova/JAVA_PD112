@@ -26,9 +26,9 @@ export interface ICategoryName {
 }
 
 export interface IProductSearch{
-    keywordName?: string,
-    keywordDescription?: string,
-    keywordCategory?: string,
+    name?: string,
+    description?: string,
+    categoryId?: number,
     page: number,
     size: number
 }
