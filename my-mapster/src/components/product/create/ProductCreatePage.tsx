@@ -1,7 +1,7 @@
 import {Button, Form, Input, Row, Select, Upload} from "antd";
 import { PlusOutlined} from '@ant-design/icons';
 import type {UploadChangeParam} from 'antd/es/upload';
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import {ICategoryName, IProductCreate} from "../types.ts";
 import http_common from "../../../http_common.ts";
@@ -30,7 +30,7 @@ const ProductCreatePage = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            navigate('/');
+            navigate('/product');
         }
         catch(ex) {
             console.log("Exception create category", ex);

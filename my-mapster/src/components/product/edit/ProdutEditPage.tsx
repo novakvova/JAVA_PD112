@@ -2,7 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Button, Form, Input, Row, Select, Upload, UploadFile, UploadProps} from "antd";
 import {useEffect, useState} from "react";
 import http_common from "../../../http_common.ts";
-import { IProductEdit, IProductItem} from "../types.ts";
+import {IProductEdit, IProductEditPhoto, IProductItem} from "../types.ts";
 import {APP_ENV} from "../../../env";
 import {ISelectItem} from "../../helpers/types.ts";
 import TextArea from "antd/es/input/TextArea";
@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import DraggableUploadListItem from '../../common/DraggableUploadListItem.tsx';
+import {createLogger} from "vite";
 
 const ProductEditPage : React.FC = () => {
     const navigate = useNavigate();
@@ -107,7 +108,31 @@ const ProductEditPage : React.FC = () => {
     );
 
     const onSubmit = async (values: IProductEdit) => {
-        console.log("data submit", values);
+
+        const oldPhotos : IProductEditPhoto[] = [];
+        const newPhotos: IProductEditPhoto[] = [];
+
+        for (let i = 0; i < fileList.length; i++) {
+            if (!fileList[i].size){
+                oldPhotos.push({photo: fileList[i].name, priority: i});
+            }
+            else {
+                const base64Content = fileList[i].thumbUrl?.split(",")[1];
+                newPhotos.push({photo: base64Content, priority: i});
+            }
+        }
+
+        const sendData: IProductEdit = {...values, id: Number(id), newPhotos: newPhotos, oldPhotos: oldPhotos};
+
+        try {
+            console.log("Send Data", sendData);
+            await http_common.put("/api/products", sendData);
+            navigate('/product');
+        }
+        catch(ex) {
+            console.log("Exception create category", ex);
+        }
+        console.log("data submit", sendData);
     }
 
     const optionsData = categories?.map(item => ({label: item.name, value: item.id}));

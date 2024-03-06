@@ -33,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final StorageService storageService;
     private final ProductMapper productMapper;
+
     @Override
     public ProductItemDTO create(ProductCreateDTO model) {
         var p = new ProductEntity();
@@ -45,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
         p.setCategory(cat);
         p.setDelete(false);
         productRepository.save(p);
-        int priority=1;
+        int priority = 1;
         for (var img : model.getFiles()) {
             var file = storageService.SaveImage(img, FileSaveFormat.WEBP);
             ProductImageEntity pi = new ProductImageEntity();
@@ -64,18 +65,17 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductItemDTO> get() {
         var list = new ArrayList<ProductItemDTO>();
         var data = productRepository.findAll();
-        for(var product : data) {
+        for (var product : data) {
             ProductItemDTO productItemDTO = new ProductItemDTO();
 
-            productItemDTO.setCategory( product.getCategory().getName() );
-            productItemDTO.setId( product.getId() );
-            productItemDTO.setName( product.getName() );
-            productItemDTO.setPrice( product.getPrice() );
-            productItemDTO.setDescription( product.getDescription() );
+            productItemDTO.setCategory(product.getCategory().getName());
+            productItemDTO.setId(product.getId());
+            productItemDTO.setName(product.getName());
+            productItemDTO.setPrice(product.getPrice());
+            productItemDTO.setDescription(product.getDescription());
 
             var items = new ArrayList<String>();
-            for (var img : product.getProductImages())
-            {
+            for (var img : product.getProductImages()) {
                 items.add(img.getName());
             }
             productItemDTO.setFiles(items);
@@ -87,18 +87,22 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductItemDTO edit(ProductEditDTO model) {
         var p = productRepository.findById(model.getId());
-        if(p.isPresent())
-        {
+        if (p.isPresent()) {
             try {
                 var product = p.get();
-                if(!model.getOldPhotos().isEmpty()) {
-                    var imagesDb = product.getProductImages();
-                    for (var image : imagesDb) {
-                        if (isAnyImage(model.getOldPhotos(), image)) {
-                            productImageRepository.delete(image);
-                            storageService.deleteImage(image.getName());
-                        }
+                var imagesDb = product.getProductImages();
+                //Видаляємо фото, якщо потрібно
+                for (var image : imagesDb) {
+                    if (!isAnyImage(model.getOldPhotos(), image)) {
+                        productImageRepository.delete(image);
+                        storageService.deleteImage(image.getName());
                     }
+                }
+                //Оновляємо пріорітет фото у списку
+                for(var old : model.getOldPhotos()) {
+                    var imgUpdate = productImageRepository.findByName(old.getPhoto());
+                    imgUpdate.setPriority(old.getPriority());
+                    productImageRepository.save(imgUpdate);
                 }
                 var cat = new CategoryEntity();
                 cat.setId(model.getCategory_id());
@@ -117,8 +121,7 @@ public class ProductServiceImpl implements ProductService {
                     pi.setProduct(product);
                     productImageRepository.save(pi);
                 }
-            }
-            catch(Exception ex) {
+            } catch (Exception ex) {
                 System.out.println("Edit product is problem " + ex.getMessage());
             }
         }
@@ -129,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
     private boolean isAnyImage(List<ProductPhotoDTO> list, ProductImageEntity image) {
         boolean result = false;
 
-        for(var item : list) {
+        for (var item : list) {
             if (item.getPhoto().equals(image.getName()))
                 return true;
         }
