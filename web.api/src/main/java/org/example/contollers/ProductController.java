@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @PutMapping
-    public ResponseEntity<ProductItemDTO> edit(@Valid @ModelAttribute ProductEditDTO model) {
+    public ResponseEntity<ProductItemDTO> edit(@RequestBody ProductEditDTO model) {
         var result = productService.edit(model);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

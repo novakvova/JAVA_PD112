@@ -3,7 +3,6 @@ import {Button, Form, Input, message, Row, Select, Upload, UploadFile} from "ant
 import {useEffect, useState} from "react";
 import http_common from "../../../http_common.ts";
 import {IProductCreate, IProductEdit, IProductItem, IProductSearch} from "../types.ts";
-import productListPage from "../list/ProductListPage.tsx";
 import {APP_ENV} from "../../../env";
 import {ISelectItem} from "../../helpers/types.ts";
 import TextArea from "antd/es/input/TextArea";
