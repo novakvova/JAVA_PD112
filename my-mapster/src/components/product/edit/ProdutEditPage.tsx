@@ -1,26 +1,37 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {Button, Form, Input, message, Row, Select, Upload, UploadFile} from "antd";
+import {Button, Form, Input, Row, Select, Upload, UploadFile, UploadProps} from "antd";
 import {useEffect, useState} from "react";
 import http_common from "../../../http_common.ts";
-import {IProductCreate, IProductEdit, IProductItem, IProductSearch} from "../types.ts";
+import { IProductEdit, IProductItem} from "../types.ts";
 import {APP_ENV} from "../../../env";
 import {ISelectItem} from "../../helpers/types.ts";
 import TextArea from "antd/es/input/TextArea";
-import {UploadChangeParam} from "antd/es/upload";
-import {IUploadedFile} from "../../category/types.ts";
+// import {UploadChangeParam} from "antd/es/upload";
+// import {IUploadedFile} from "../../category/types.ts";
 import {PlusOutlined} from "@ant-design/icons";
-
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
+import DraggableUploadListItem from '../../common/DraggableUploadListItem.tsx';
 
 const ProductEditPage : React.FC = () => {
     const navigate = useNavigate();
 
-    const [messageApi, contextHolder] = message.useMessage();
+    // const [messageApi, contextHolder] = message.useMessage();
 
     const [categories, setCategories] = useState<ISelectItem[]>([]);
 
     const {id} = useParams();
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const sensor = useSensor(PointerSensor, {
+        activationConstraint: { distance: 10 },
+    });
 
     const [product, setProduct] = useState<IProductItem>({
         id: 0,
@@ -62,7 +73,7 @@ const ProductEditPage : React.FC = () => {
                     uid: data.files[i],
                     name: data.files[i],
                     status: 'done',
-                    url: `${APP_ENV.BASE_URL}/uploading/upload/300_${data.files[i]}`,
+                    url: `${APP_ENV.BASE_URL}/uploading/300_${data.files[i]}`,
                 });
             }
             setFileList(newFileList);
@@ -73,6 +84,27 @@ const ProductEditPage : React.FC = () => {
             });
         }
     };
+
+    const onDragEnd = ({ active, over }: DragEndEvent) => {
+        if (active.id !== over?.id) {
+            setFileList((prev) => {
+                const activeIndex = prev.findIndex((i) => i.uid === active.id);
+                const overIndex = prev.findIndex((i) => i.uid === over?.id);
+                return arrayMove(prev, activeIndex, overIndex);
+            });
+        }
+    };
+
+    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+        setFileList(newFileList);
+    };
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
 
     const onSubmit = async (values: IProductEdit) => {
         console.log("data submit", values);
@@ -148,35 +180,34 @@ const ProductEditPage : React.FC = () => {
                     </Form.Item>
 
 
-
                     <Form.Item
-                        name="files"
-                        label="Images"
-                        valuePropName="files"
-                        getValueFromEvent={(e: UploadChangeParam) => {
-                            const image = e?.fileList[0] as IUploadedFile;
-                            return image?.originFileObj;
-                        }}
-                        rules={[{required: true, message: 'Choose image for category!'}]}
+                        label="Фото"
                     >
-                        <Upload
-                            showUploadList={{showPreviewIcon: false}}
-                            beforeUpload={() => false}
-                            accept="image/*"
-                            listType="picture-card"
-                            maxCount={10}
-                        >
-                            <div>
-                                <PlusOutlined/>
-                                <div style={{marginTop: 8}}>Upload</div>
-                            </div>
-                        </Upload>
+                        <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+                            <SortableContext items={fileList.map((i) => i.uid)} strategy={horizontalListSortingStrategy}>
+                                <Upload
+                                    showUploadList={{showPreviewIcon: false}}
+                                    beforeUpload={() => false}
+                                    accept="image/*"
+                                    listType="picture-card"
+                                    fileList={fileList}
+                                    onChange={handleChange}
+                                    itemRender={(originNode, file) => (
+                                        <DraggableUploadListItem originNode={originNode} file={file} />
+                                    )}
+                                >
+                                    {fileList.length >= 8 ? null : uploadButton}
+                                </Upload>
+                            </SortableContext>
+                        </DndContext>
                     </Form.Item>
+
+
                     <Row style={{display: 'flex', justifyContent: 'center'}}>
                         <Button style={{margin: 10}} type="primary" htmlType="submit">
-                            Add
+                            Зберети
                         </Button>
-                        <Button style={{margin: 10}} htmlType="button" onClick={() =>{ navigate('/')}}>
+                        <Button style={{margin: 10}} htmlType="button" onClick={() =>{ navigate('/product')}}>
                             Cancel
                         </Button>
                     </Row>
