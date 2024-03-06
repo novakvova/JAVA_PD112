@@ -17,7 +17,6 @@ import {
 } from '@dnd-kit/sortable';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
 import DraggableUploadListItem from '../../common/DraggableUploadListItem.tsx';
-import {createLogger} from "vite";
 
 const ProductEditPage : React.FC = () => {
     const navigate = useNavigate();
