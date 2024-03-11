@@ -7,6 +7,7 @@ import TestPage from "./components/test";
 import ProductListPage from "./components/product/list/ProductListPage.tsx";
 import ProductCreatePage from "./components/product/create/ProductCreatePage.tsx";
 import ProductEditPage from "./components/product/edit/ProdutEditPage.tsx";
+import Login from "./views/Login";
 
 const App = () => (
     <>
@@ -23,6 +24,8 @@ const App = () => (
                     <Route path={"create"} element={<ProductCreatePage/>} />
                     <Route path={"edit/:id"} element={<ProductEditPage/>} />
                 </Route>
+
+                <Route path={"login"} element={<Login/>} />
 
                 <Route path={"test"} element={<TestPage/>}/>
             </Route>
