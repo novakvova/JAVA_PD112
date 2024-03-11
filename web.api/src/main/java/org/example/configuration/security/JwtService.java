@@ -30,9 +30,7 @@ public class JwtService {
 
     //метод призначений для того, щоб для визначеного юзера зробити jwt token
     public String generateAccessToken(UserEntity user) {
-
         var roles = userRoleRepository.findByUser(user);
-
         return Jwts.builder()
                 .setSubject(format("%s,%s", user.getId(), user.getEmail()))
                 .claim("email", user.getEmail())
