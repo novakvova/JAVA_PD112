@@ -140,7 +140,7 @@ const Register : React.FC = () => {
 
                         <Form.Item wrapperCol={{span: 24}}>
                             <Typography style={{textAlign: 'center'}}>
-                                Немає аккаунта? <Link to="/account/register">Створити зараз!</Link>
+                                Аккаунта є? <Link to="/login">Війти зараз!</Link>
                             </Typography>
                         </Form.Item>
                     </Form>

@@ -9,6 +9,7 @@ const DefaultLayout = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
     return (
         <Layout>
             <DefaultHeader/>

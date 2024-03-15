@@ -1,25 +1,22 @@
-import {Button, Layout, Menu} from 'antd';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
+import {Avatar, Button, Layout, Menu} from 'antd';
+import {Link, useLocation} from 'react-router-dom';
+import {UserOutlined, PoweroffOutlined} from '@ant-design/icons';
+import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
+import ButtonGroup from "antd/es/button/button-group";
+import {APP_ENV} from "../../../env";
+import {logout} from "../../../store/accounts/accounts.slice.ts";
 
 const {Header} = Layout;
 
-
-const ButtonStyle = {
-    margin: '0 10px 0 0',
-};
 const DefaultHeader = () => {
+    const dispatch = useAppDispatch();
     const location = useLocation();
-    const navigateTo = useNavigate();
 
+    const {isLogin, user} = useAppSelector(state => state.account);
 
-
-    const handleSignInClick = () => {
-        navigateTo('/login')
-    };
-
-    const handleRegisterClick = () => {
-        // Navigate to the login form when the button is clicked
-        navigateTo('/register')
+    const handleLogout = () => {
+        //console.log("Logout user");
+        dispatch(logout());
     };
 
     return (
@@ -36,12 +33,29 @@ const DefaultHeader = () => {
                     </Menu.Item>
             </Menu>
 
-            <>
-                <Button style={ButtonStyle} onClick={handleSignInClick}>
-                    Sign-In
-                </Button>
-                <Button onClick={handleRegisterClick}>Register</Button>
-            </>
+            {isLogin ? (
+                <ButtonGroup size="large">
+                    <Button
+                        type="primary"
+                        style={{display: 'flex'}}
+                        icon={<Avatar  size="small" src={`${APP_ENV.BASE_URL}images/${user?.name}`}/>}
+                    >
+                        {user?.name}
+                    </Button>
+                    <Button
+                        type="primary"
+                        icon={<PoweroffOutlined/>}
+                        onClick={() => handleLogout()}
+                    />
+                </ButtonGroup>
+
+            ) : (
+                <Link to="/login" style={{color: 'inherit', textDecoration: 'none'}}>
+                    <Button type="primary" icon={<UserOutlined/>}>
+                        Увійти
+                    </Button>
+                </Link>
+            )}
 
         </Header>
     );
