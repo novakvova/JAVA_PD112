@@ -23,7 +23,6 @@ const App : React.FC = () => {
                         <Route path={"edit/:id"} element={<CategoryEditPage/>}/>
                     </Route>
 
-
                     <Route path={"login"} element={<Login/>}/>
                     <Route path={"register"} element={<Register/>}/>
 
