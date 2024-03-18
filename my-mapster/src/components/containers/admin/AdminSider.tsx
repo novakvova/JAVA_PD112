@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
     DesktopOutlined,
     PieChartOutlined,
+    HomeOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
@@ -28,6 +29,7 @@ function getItem(
 const items: MenuItem[] = [
     getItem(<Link to={"/admin/category"} >Категорії</Link>, '1', <PieChartOutlined />),
     getItem(<Link to={"/admin/product"}>Товари</Link>, '2', <DesktopOutlined />),
+    getItem(<Link to={"/"}>На головну</Link>, '3', <HomeOutlined />),
 ];
 
 const AdminSider = () => {

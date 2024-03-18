@@ -19,6 +19,13 @@ const DefaultHeader = () => {
         dispatch(logout());
     };
 
+    let isAdmin = false;
+
+    user?.roles.forEach(role=> {
+        if (role.toLowerCase().includes('admin'))
+            isAdmin=true;
+    });
+
     return (
         <Header style={{display: 'flex', alignItems: 'center'}}>
             <div className="demo-logo"/>
@@ -31,6 +38,11 @@ const DefaultHeader = () => {
                     <Menu.Item key={"products"}>
                         <Link to={`/product`}>Продукти</Link>
                     </Menu.Item>
+                {isAdmin &&
+                    <Menu.Item key={"admin"}>
+                        <Link to={`/admin/category`}>Панель керування</Link>
+                    </Menu.Item>
+                }
             </Menu>
 
             {isLogin ? (

@@ -1,5 +1,5 @@
-import {Button, Col, Collapse, Form, Input, Pagination, Row, Space} from "antd";
-import {Link, useSearchParams} from "react-router-dom";
+import {Button, Col, Collapse, Form, Input, Pagination, Row} from "antd";
+import {useSearchParams} from "react-router-dom";
 import {ICategorySearch, IGetCategories} from "../../components/admin/category/types.ts";
 import http_common from "../../http_common.ts";
 import {useEffect, useState} from "react";
