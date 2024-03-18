@@ -1,54 +1,33 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {Button, Form, Input, Row, Upload, UploadFile} from "antd";
-import {ICategoryEdit, ICategoryItem, IUploadedFile} from "../types.ts";
-import http_common from "../../../http_common.ts";
+import {useNavigate} from "react-router-dom";
+import {ICategoryCreate, IUploadedFile} from "../types.ts";
+import {Button, Form, Input, Row, Upload} from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { PlusOutlined } from '@ant-design/icons';
 import {UploadChangeParam} from "antd/es/upload";
-import {PlusOutlined} from "@ant-design/icons";
-import {useEffect, useState} from "react";
-import {APP_ENV} from "../../../env";
+import http_common from "../../../../http_common.ts";
 
-const CategoryEditPage = () => {
+const CategoryCreatePage = () => {
     const navigate = useNavigate();
-    const {id} = useParams();
-    const [form] = Form.useForm<ICategoryEdit>();
-    const [file, setFile] = useState<UploadFile | null>();
 
-    const onSubmit = async (values: ICategoryEdit) => {
+    const [form] = Form.useForm<ICategoryCreate>();
+
+    const onSubmit = async (values: ICategoryCreate) => {
         try {
-            await http_common.put("/api/categories", values, {
+            await http_common.post("/api/categories", values, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
             navigate('/');
-        } catch (ex) {
+        }
+        catch(ex) {
             console.log("Exception create category", ex);
         }
     }
 
-    useEffect(() => {
-        http_common.get<ICategoryItem>(`/api/categories/${id}`)
-            .then(resp => {
-                const {data} = resp;
-                form.setFieldsValue(data);
-                setFile(
-                    {
-                                uid: '-1',
-                                name: data.image,
-                                status: 'done',
-                                url: `${APP_ENV.BASE_URL}/uploading/150_${data.image}`,
-                           });
-            })
-            .catch(error => {
-                console.log("Error server ", error);
-            });
-    }, [id]);
-
-
     return (
         <>
-            <h1>Редагування категорію</h1>
+            <h1>Додати категорію</h1>
             <Row gutter={16}>
                 <Form form={form}
                       onFinish={onSubmit}
@@ -60,12 +39,7 @@ const CategoryEditPage = () => {
                           justifyContent: 'center',
                           padding: 20,
                       }}
-                >
-                    <Form.Item
-                        name="id"
-                        hidden
-                    />
-
+                      >
                     <Form.Item
                         label="Назва"
                         name="name"
@@ -89,7 +63,6 @@ const CategoryEditPage = () => {
                     >
                         <TextArea/>
                     </Form.Item>
-
                     <Form.Item
                         name="file"
                         label="Фото"
@@ -98,6 +71,7 @@ const CategoryEditPage = () => {
                             const image = e?.fileList[0] as IUploadedFile;
                             return image?.originFileObj;
                         }}
+                        rules={[{required: true, message: 'Оберіть фото категорії!'}]}
                     >
                         <Upload
                             showUploadList={{showPreviewIcon: false}}
@@ -105,15 +79,10 @@ const CategoryEditPage = () => {
                             accept="image/*"
                             listType="picture-card"
                             maxCount={1}
-                            fileList={file ? [file] : []}
-                            onChange={(data)=> {
-                                setFile(data.fileList[0]);
-                            }}
-
                         >
                             <div>
                                 <PlusOutlined/>
-                                <div style={{marginTop: 8}}>Обрати нове фото</div>
+                                <div style={{marginTop: 8}}>Upload</div>
                             </div>
                         </Upload>
                     </Form.Item>
@@ -121,9 +90,7 @@ const CategoryEditPage = () => {
                         <Button style={{margin: 10}} type="primary" htmlType="submit">
                             Додати
                         </Button>
-                        <Button style={{margin: 10}} htmlType="button" onClick={() => {
-                            navigate('/')
-                        }}>
+                        <Button style={{margin: 10}} htmlType="button" onClick={() =>{ navigate('/')}}>
                             Скасувати
                         </Button>
                     </Row>
@@ -135,4 +102,4 @@ const CategoryEditPage = () => {
     )
 }
 
-export default CategoryEditPage;
+export default CategoryCreatePage;

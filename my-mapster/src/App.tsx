@@ -1,15 +1,16 @@
 import {Route, Routes} from "react-router-dom";
 import DefaultLayout from "./components/containers/default/DefaultLayout.tsx";
-import CategoryListPage from "./components/category/list/CategoryListPage.tsx";
-import CategoryCreatePage from "./components/category/create/CategoryCreatePage.tsx";
-import CategoryEditPage from "./components/category/edit/CategoryEditPage.tsx";
+import CategoryListPage from "./components/admin/category/list/CategoryListPage.tsx";
+import CategoryCreatePage from "./components/admin/category/create/CategoryCreatePage.tsx";
+import CategoryEditPage from "./components/admin/category/edit/CategoryEditPage.tsx";
 import TestPage from "./components/test";
-import ProductListPage from "./components/product/list/ProductListPage.tsx";
-import ProductCreatePage from "./components/product/create/ProductCreatePage.tsx";
-import ProductEditPage from "./components/product/edit/ProdutEditPage.tsx";
+import ProductListPage from "./components/admin/product/list/ProductListPage.tsx";
+import ProductCreatePage from "./components/admin/product/create/ProductCreatePage.tsx";
+import ProductEditPage from "./components/admin/product/edit/ProdutEditPage.tsx";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import AdminLayout from "./components/containers/admin/AdminLayout.tsx";
+import HomePage from "./views/Home";
 
 const App : React.FC = () => {
 
@@ -17,11 +18,7 @@ const App : React.FC = () => {
         <>
             <Routes>
                 <Route path="/" element={<DefaultLayout/>}>
-                    <Route index element={<CategoryListPage/>}/>
-                    <Route path={"category"}>
-                        <Route path={"create"} element={<CategoryCreatePage/>}/>
-                        <Route path={"edit/:id"} element={<CategoryEditPage/>}/>
-                    </Route>
+                    <Route index element={<HomePage/>}/>
 
                     <Route path={"login"} element={<Login/>}/>
                     <Route path={"register"} element={<Register/>}/>

@@ -1,10 +1,10 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {Button, Form, Input, Row, Select, Upload, UploadFile, UploadProps} from "antd";
 import {useEffect, useState} from "react";
-import http_common from "../../../http_common.ts";
+import http_common from "../../../../http_common.ts";
 import {IProductEdit, IProductEditPhoto, IProductItem} from "../types.ts";
-import {APP_ENV} from "../../../env";
-import {ISelectItem} from "../../helpers/types.ts";
+import {APP_ENV} from "../../../../env";
+import {ISelectItem} from "../../../helpers/types.ts";
 import TextArea from "antd/es/input/TextArea";
 // import {UploadChangeParam} from "antd/es/upload";
 // import {IUploadedFile} from "../../category/types.ts";
@@ -16,7 +16,7 @@ import {
     horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import {DndContext, PointerSensor, useSensor} from '@dnd-kit/core';
-import DraggableUploadListItem from '../../common/DraggableUploadListItem.tsx';
+import DraggableUploadListItem from '../../../common/DraggableUploadListItem.tsx';
 
 const ProductEditPage : React.FC = () => {
     const navigate = useNavigate();
